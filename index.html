@@ -1,388 +1,168 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PrimeExpress — Transporte Premium (simulação)</title>
-
-<!-- Leaflet (map) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  crossorigin=""></script>
-
-<style>
-  :root{--blue:#0b63b7;--dark:#062240;--muted:#6b7280;--accent:#ff9900}
-  *{box-sizing:border-box}
-  body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; margin:0; color:#111; background:#f5f7fb}
-  /* marketplace header */
-  .topbar{background:#fff; border-bottom:1px solid #e6eefc; padding:10px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px}
-  .market-logos{display:flex; gap:14px; align-items:center}
-  .market-logos .logo{display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; background:linear-gradient(180deg,#fff,#fbfdff); box-shadow:0 2px 8px rgba(11,38,73,0.03)}
-  .brand{display:flex; gap:12px; align-items:center}
-  .brand .mark{background:linear-gradient(90deg, var(--blue), #2b8fe6); color:#fff; font-weight:700; padding:8px 10px; border-radius:8px}
-  .brand .text{display:flex; flex-direction:column}
-  .nav-actions{display:flex; gap:12px; align-items:center}
-  .btn{background:var(--dark); color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer}
-  .btn.ghost{background:white; color:var(--dark); border:1px solid #e3e9f5}
-  .container{max-width:1100px; margin:20px auto; padding:0 18px}
-  .market-sim{display:grid; grid-template-columns:1fr 380px; gap:18px; align-items:start}
-  .product-card{background:#fff; border-radius:12px; padding:18px; box-shadow:0 8px 24px rgba(11,38,73,0.06)}
-  .product-img{height:260px; border-radius:10px; background:linear-gradient(180deg,#f8fafc,#eef6ff); display:flex; align-items:center; justify-content:center; color:var(--muted)}
-  .product-info{margin-top:12px}
-  .market-button{display:flex; gap:10px; margin-top:16px}
-  .market-button button{flex:1}
-  /* pages */
-  .page{display:none}
-  .page.active{display:block}
-  /* features */
-  .features{display:flex; gap:12px; margin-top:12px}
-  .feature{background:#fff;padding:12px;border-radius:10px;flex:1}
-  /* tracking area */
-  #map { height: 360px; border-radius:10px; border:1px solid #dbeffd; box-shadow:0 6px 18px rgba(11,38,73,0.05) }
-  .track-panel{background:#fff;padding:12px;border-radius:10px; box-shadow:0 6px 18px rgba(11,38,73,0.05)}
-  .form-row{display:flex; gap:8px}
-  input, select, textarea{padding:10px;border-radius:8px;border:1px solid #d7e7fb;width:100%}
-  footer{padding:22px;text-align:center;color:var(--muted)}
-  .small{font-size:13px;color:var(--muted)}
-  @media(max-width:980px){ .market-sim{grid-template-columns:1fr} #map{height:260px} .market-logos{display:none} }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrimeExpress - Entregas Premium</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f6fa;
+      color: #333;
+    }
+    header {
+      background-color: #004aad;
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    header span {
+      color: #00c6ff;
+    }
+    main {
+      padding: 2rem;
+      text-align: center;
+    }
+    .hero {
+      background: url('img/amazon.jpg') center/cover no-repeat;
+      padding: 5rem 2rem;
+      color: white;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+      border-radius: 10px;
+    }
+    .hero h2 {
+      font-size: 2rem;
+    }
+    .buttons {
+      margin-top: 2rem;
+    }
+    .buttons button {
+      margin: 0.5rem;
+      padding: 1rem 2rem;
+      background-color: #004aad;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+    .buttons button:hover {
+      background-color: #00c6ff;
+    }
+    section {
+      margin-top: 3rem;
+      display: none;
+    }
+    input, select, textarea {
+      padding: 0.8rem;
+      margin: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 80%;
+      max-width: 400px;
+    }
+    #rastreamento-status {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    footer {
+      margin-top: 3rem;
+      background-color: #004aad;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-
-<!-- header -->
-<div class="topbar">
-  <div class="brand">
-    <div class="mark">PE</div>
-    <div class="text">
-      <div style="font-weight:700">PrimeExpress</div>
-      <div style="font-size:12px;color:var(--muted)">Transporte Premium · Rastreio em tempo real</div>
-    </div>
-  </div>
-
-  <div class="market-logos" title="Lojas parceiras (simulação)">
-    <div class="logo"><svg width="34" height="20" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF9900"/><text x="50%" y="60%" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">AMZ</text></svg></div>
-    <div class="logo"><svg width="34" height="20" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#00AEEF"/><text x="50%" y="60%" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">MAG</text></svg></div>
-    <div class="logo"><svg width="34" height="20" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FFE600"/><text x="50%" y="60%" font-size="10" font-weight="700" text-anchor="middle" fill="#111">ML</text></svg></div>
-  </div>
-
-  <div class="nav-actions">
-    <button class="btn ghost" onclick="show('home')">Home</button>
-    <button class="btn" onclick="show('rastreio')">Rastrear</button>
-  </div>
-</div>
-
-<!-- main -->
-<div class="container">
-  <!-- HOME / marketplace simulation -->
-  <section id="home" class="page active">
-    <div class="market-sim">
-      <div class="product-card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div class="small">Marketplace — Página do pedido (simulação)</div>
-            <h2 style="margin:6px 0">Smartphone X — Loja Parceira</h2>
-            <div class="small">Entrega estimada em 3 dias • PrimeExpress disponível</div>
-          </div>
-          <div style="text-align:right">
-            <div class="small">Preço</div>
-            <div style="font-weight:700">R$ 2.499,00</div>
-          </div>
-        </div>
-
-        <div class="product-img" style="margin-top:12px">
-          <!-- placeholder image -->
-          <div>
-            <div style="font-weight:700">IMAGEM DO PRODUTO</div>
-            <div class="small" style="margin-top:6px">Substitua pela captura da página do marketplace</div>
-          </div>
-        </div>
-
-        <div class="product-info">
-          <div style="display:flex;gap:12px;align-items:center">
-            <button class="btn" onclick="simulateBuy()">Comprar com PrimeExpress</button>
-            <button class="btn ghost" onclick="openPrimeButton()">Rastrear com PrimeExpress</button>
-          </div>
-
-          <div class="features">
-            <div class="feature"><strong>Rastreamento em tempo real</strong><div class="small">Acompanhe a rota do entregador.</div></div>
-            <div class="feature"><strong>Atendimento via WhatsApp</strong><div class="small">Fale com um atendente humanizado.</div></div>
-            <div class="feature"><strong>Integração com marketplaces</strong><div class="small">Botão dentro da loja para rastrear.</div></div>
-          </div>
-        </div>
-      </div>
-
-      <aside class="track-panel">
-        <h3>Rastreios recentes (simulação)</h3>
-        <div id="recentList" style="margin-top:8px"></div>
-
-        <hr style="margin:12px 0;border:none;border-top:1px solid #eef6ff">
-
-        <h4>Buscar pedido</h4>
-        <div class="small" style="margin-bottom:8px">Digite um ID válido (ex: PRX123456) ou gere um pedido com "Comprar".</div>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <input id="quickId" placeholder="Ex: PRX123456" />
-          <button class="btn" onclick="startTrackingFromInput()">Rastrear</button>
-        </div>
-
-        <div class="small" style="margin-top:8px">Atendimento: <a href="#" onclick="openWhatsAppWindow()">WhatsApp</a></div>
-
-        <div style="margin-top:12px" class="small">Baixar arquivo: <a id="downloadLink" href="#" download="index.html">Clique aqui para baixar este index.html</a></div>
-      </aside>
-    </div>
-  </section>
-
-  <!-- RASTREIO PAGE -->
-  <section id="rastreio" class="page">
-    <div style="display:flex;gap:18px;flex-wrap:wrap">
-      <div style="flex:1;min-width:320px">
-        <div class="track-panel">
-          <h3>Rastreio do pedido <span id="displayId">—</span></h3>
-          <p class="small" id="etaText">Insira um ID para iniciar a simulação.</p>
-
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <input id="orderId" placeholder="Ex: PRX123456" />
-            <button class="btn" onclick="startTrackingFromInput()">Iniciar rastreio</button>
-          </div>
-
-          <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">
-            <div style="flex:1">
-              <div class="small">Status</div>
-              <div id="status" style="font-weight:700">—</div>
-            </div>
-            <div style="flex:1">
-              <div class="small">Última atualização</div>
-              <div id="lastUpdate">—</div>
-            </div>
-            <div style="flex:1">
-              <div class="small">Coordenadas</div>
-              <div id="coords">—</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style="flex:1;min-width:320px">
-        <div id="map"></div>
+  <header>
+    Prime<span>Express</span>
+  </header>
+  <main>
+    <div class="hero">
+      <h2>Entregas premium em tempo real — do clique à sua porta.</h2>
+      <div class="buttons">
+        <button onclick="showSection('rastreamento')">Rastrear Pedido</button>
+        <button onclick="showSection('problema')">Problema com Entrega</button>
+        <button onclick="showSection('devolucao')">Devolução</button>
+        <button onclick="showSection('sac')">SAC</button>
       </div>
     </div>
-  </section>
 
-  <!-- PROBLEMA / DEVOLUCAO -->
-  <section id="problema" class="page">
-    <div class="product-card">
-      <h3>Problema com entrega / Devolução</h3>
-      <form onsubmit="event.preventDefault(); submitIssue();">
-        <label class="small">Nome</label><input id="nome" required />
-        <label class="small">E-mail</label><input id="email" type="email" required />
-        <label class="small">ID do pedido</label><input id="pedido_problema" required />
-        <label class="small">Descrição</label><textarea id="descricao" rows="4"></textarea>
-        <div style="margin-top:10px"><button class="btn" type="submit">Enviar</button></div>
-      </form>
-      <div id="issueResult" style="margin-top:12px"></div>
-    </div>
-  </section>
+    <section id="rastreamento">
+      <h3>Rastreie seu pedido</h3>
+      <input type="text" id="pedidoId" placeholder="Digite o ID do pedido (ex: EXP12345)" />
+      <button onclick="rastrearPedido()">Rastrear</button>
+      <div id="rastreamento-status"></div>
+    </section>
 
-  <!-- SAC -->
-  <section id="sac" class="page">
-    <div class="product-card">
-      <h3>SAC — Atendimento</h3>
-      <form onsubmit="event.preventDefault(); submitSAC();">
-        <label class="small">Onde comprou?</label>
-        <select id="loja">
-          <option>Amazon</option>
-          <option>Mercado Livre</option>
-          <option>Magalu</option>
-          <option>Outro</option>
-        </select>
-        <label class="small">Mensagem</label>
-        <textarea id="sac_msg" rows="3"></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="btn" type="submit">Enviar pelo site</button>
-          <button class="btn ghost" onclick="openWhatsAppWindow()" type="button">Abrir WhatsApp</button>
-        </div>
-      </form>
-      <div id="sacResult" style="margin-top:12px"></div>
-    </div>
-  </section>
+    <section id="problema">
+      <h3>Problema com Entrega</h3>
+      <p>Nos informe o problema encontrado. Nosso time vai entrar em contato rapidamente!</p>
+      <textarea placeholder="Descreva o problema"></textarea><br>
+      <button>Enviar</button>
+    </section>
 
-</div>
+    <section id="devolucao">
+      <h3>Solicitar Devolução</h3>
+      <p>Preencha os dados abaixo para iniciar o processo de devolução.</p>
+      <input type="text" placeholder="Número do pedido" />
+      <input type="text" placeholder="Motivo da devolução" />
+      <button>Enviar solicitação</button>
+    </section>
 
-<footer>
-  © PrimeExpress — Simulação para trabalho acadêmico · Desenvolvido por você
-</footer>
+    <section id="sac">
+      <h3>Fale com o SAC</h3>
+      <input type="text" placeholder="Seu nome" /><br>
+      <input type="email" placeholder="Seu e-mail" /><br>
+      <select>
+        <option value="">Selecione o marketplace</option>
+        <option>Amazon</option>
+        <option>Magazine Luiza</option>
+        <option>Mercado Livre</option>
+        <option>Shopee</option>
+      </select><br>
+      <textarea placeholder="Descreva sua dúvida"></textarea><br>
+      <button>Enviar mensagem</button>
+      <p>Ou fale conosco direto pelo <a href="https://wa.me/5500000000000" target="_blank">WhatsApp</a>.</p>
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 PrimeExpress — Todos os direitos reservados</p>
+  </footer>
 
-<script>
-/* ----------------- NAVIGATION ----------------- */
-function show(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+  <script>
+    const pedidos = {
+      'EXP12345': 'Em trânsito — previsão de entrega: hoje, 17h',
+      'EXP98765': 'Saiu para entrega — motorista: João R.',
+      'EXP55555': 'Entregue — recebido por: M. Silva às 14h45'
+    };
 
-/* ----------------- MOCK MARKETPLACE INTERACTIONS ----------------- */
-function openPrimeButton(){ openModalOptions(); }
-function openModalOptions(){
-  const choice = confirm('Abrir PrimeExpress? (Simulação)\\nClique OK para Rastrear, Cancel para abrir SAC');
-  if(choice) show('rastreio'); else show('sac');
-}
-
-/* ----------------- SAMPLE ORDERS ----------------- */
-const sampleOrders = [
-  {id:'PRX123456', note:'Em trânsito — SP (rota padrão)'},
-  {id:'PRX234567', note:'Saiu para entrega — próximo'},
-  {id:'PRX345678', note:'Recém-coletado — a caminho do CD'},
-  {id:'PRX456789', note:'Entregue — finalizado'},
-  {id:'PRX987654', note:'Atrasado — trânsito (previsão +45 min)'},
-  {id:'PRX876543', note:'Retornado ao depósito — problema endereço'},
-  {id:'PRX112233', note:'Agendado — entrega mais tarde'},
-  {id:'PRX445566', note:'Tentativa de entrega — porteiro/porta fechada'},
-  {id:'PRX778899', note:'Rota longa — simulação internacional'},
-  {id:'PRX000111', note:'Cancelado pelo vendedor'}
-];
-
-function populateRecent(){
-  const box = document.getElementById('recentList');
-  if(!box) return;
-  box.innerHTML = '';
-  sampleOrders.forEach(o=>{
-    const div = document.createElement('div');
-    div.style.marginBottom = '8px';
-    div.innerHTML = `<button class="btn ghost" style="width:100%;text-align:left" onclick="startTrackingPreset('${o.id}')">
-                       <strong>${o.id}</strong> — <span style="color:var(--muted)">${o.note}</span>
-                     </button>`;
-    box.appendChild(div);
-  });
-}
-
-/* ----------------- MAP + TRACKING SIMULATION (Leaflet) ----------------- */
-let map, marker, routeLine;
-function initMap(){
-  map = L.map('map', { zoomControl:true }).setView([-23.55052, -46.633308], 12); // São Paulo
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
-  marker = L.circleMarker([-23.55, -46.63], {radius:8, color:'#0b63b7', fillColor:'#0b63b7', fillOpacity:1}).addTo(map);
-  routeLine = L.polyline([], {color:'#0b63b7'}).addTo(map);
-}
-
-function simulateRoute(orderId){
-  // routes: generate 6 points around SP with small offsets
-  const base = [-23.55, -46.63];
-  const points = [];
-  for(let i=0;i<6;i++){
-    const lat = base[0] + (Math.random()-0.5) * 0.12 * (i/5);
-    const lng = base[1] + (Math.random()-0.5) * 0.12 * (i/5);
-    points.push([lat,lng]);
-  }
-  // animate marker along points
-  let idx = 0;
-  routeLine.setLatLngs([points[0]]);
-  marker.setLatLng(points[0]);
-  map.panTo(points[0]);
-  updateStatus('Em trânsito', points[0]);
-  const interval = setInterval(()=>{
-    idx++;
-    if(idx>=points.length){
-      clearInterval(interval);
-      updateStatus('Entregue', points[points.length-1]);
-      return;
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
     }
-    // move marker smoothly (approx)
-    marker.setLatLng(points[idx]);
-    const currentPoints = routeLine.getLatLngs();
-    currentPoints.push(points[idx]);
-    routeLine.setLatLngs(currentPoints);
-    map.panTo(points[idx]);
-    updateStatus(indexToStatus(idx), points[idx]);
-  }, 1800);
-}
 
-function indexToStatus(i){
-  if(i===0) return 'Pedido confirmado';
-  if(i===1) return 'A caminho do centro de distribuição';
-  if(i===2) return 'Em trânsito';
-  if(i===3) return 'Saiu para entrega';
-  if(i===4) return 'A caminho do cliente';
-  return 'Entregue';
-}
-
-function updateStatus(text, coordsArr){
-  document.getElementById('status').textContent = text;
-  const now = new Date();
-  document.getElementById('lastUpdate').textContent = now.toLocaleTimeString();
-  if(coordsArr) document.getElementById('coords').textContent = coordsArr[0].toFixed(5) + ' , ' + coordsArr[1].toFixed(5);
-}
-
-/* ----------------- Tracking control ----------------- */
-function startTrackingFromInput(){
-  const id = (document.getElementById('quickId') && document.getElementById('quickId').value.trim()) || (document.getElementById('orderId') && document.getElementById('orderId').value.trim());
-  if(!id){ alert('Informe o ID do pedido'); return; }
-  document.getElementById('displayId').textContent = id;
-  show('rastreio');
-  // if id matches a sample order with special note, show in etaText
-  const found = sampleOrders.find(s=>s.id===id);
-  if(found) document.getElementById('etaText').textContent = found.note;
-  else document.getElementById('etaText').textContent = 'Rastreamento iniciado (simulação)';
-  // clear line
-  routeLine.setLatLngs([]);
-  simulateRoute(id);
-}
-
-/* start preset from recent list */
-function startTrackingPreset(orderId){
-  const quick = document.getElementById('quickId') || document.getElementById('orderId');
-  if(quick) quick.value = orderId;
-  if(typeof startTrackingFromInput === 'function') startTrackingFromInput();
-}
-
-/* simulate buy -> generates order id and adds to recent */
-function simulateBuy(){
-  // generate random PRX code
-  const rnd = Math.floor(100000 + Math.random()*800000);
-  const code = 'PRX' + rnd;
-  sampleOrders.unshift({id:code, note:'Novo pedido — aguardando coleta'});
-  // limit array size
-  if(sampleOrders.length>20) sampleOrders.pop();
-  populateRecent();
-  // auto start tracking
-  document.getElementById('quickId').value = code;
-  startTrackingFromInput();
-}
-
-/* ----------------- Issue / SAC handlers ----------------- */
-function submitIssue(){
-  const nome = document.getElementById('nome').value; const email = document.getElementById('email').value; const pedido = document.getElementById('pedido_problema').value; const desc = document.getElementById('descricao').value;
-  if(!nome||!email||!pedido){ alert('Preencha nome, e-mail e ID do pedido'); return }
-  document.getElementById('issueResult').innerHTML = `<div style="padding:10px;border-radius:8px;background:#f1f8ff;border:1px solid #cfe7ff">Obrigado, ${nome}. Recebemos sua solicitação (ID ${pedido}). Nossa equipe entrará em contato no e-mail ${email}.</div>`;
-}
-
-const whatsappNumber = '5511999999999';
-function openWhatsAppWindow(){
-  const loja = document.getElementById('loja') ? document.getElementById('loja').value : 'Amazon';
-  const msg = encodeURIComponent('Olá, preciso de ajuda com meu pedido PrimeExpress. Loja: ' + loja);
-  const url = `https://wa.me/${whatsappNumber}?text=${msg}`;
-  window.open(url,'_blank');
-}
-function submitSAC(){
-  const loja=document.getElementById('loja').value; const msg=document.getElementById('sac_msg').value||'(sem mensagem)';
-  document.getElementById('sacResult').innerHTML = `<div style="padding:10px;border-radius:8px;background:#f1f8ff;border:1px solid #cfe7ff">Obrigado — Mensagem enviada referente à compra em <strong>${loja}</strong>. Respondemos via WhatsApp em breve.</div>`;
-}
-
-/* ----------------- Download link generation ----------------- */
-function generateDownloadLink(){
-  // create blob of the current page's HTML to download
-  const html = document.documentElement.outerHTML;
-  const blob = new Blob([html], {type: 'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.getElementById('downloadLink');
-  a.href = url;
-  a.download = 'index.html';
-}
-
-/* ----------------- INIT ----------------- */
-document.addEventListener('DOMContentLoaded', ()=>{
-  populateRecent();
-  initMap();
-  generateDownloadLink();
-});
-</script>
-
+    function rastrearPedido() {
+      const id = document.getElementById('pedidoId').value.trim().toUpperCase();
+      const statusDiv = document.getElementById('rastreamento-status');
+      statusDiv.innerHTML = '<em>Carregando rastreamento...</em>';
+      setTimeout(() => {
+        if (pedidos[id]) {
+          statusDiv.textContent = pedidos[id];
+        } else {
+          statusDiv.textContent = 'Pedido não encontrado. Verifique o ID e tente novamente.';
+        }
+      }, 1000);
+    }
+  </script>
 </body>
 </html>
