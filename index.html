@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>PrimeExpress — Transporte Premium (simulação)</title>
 
-<!-- Leaflet (map) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
@@ -20,8 +19,10 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; mar
 .brand{display:flex; gap:12px; align-items:center}
 .brand img{height:40px;width:auto}
 .nav-actions{display:flex; gap:12px; align-items:center}
-.btn{background:var(--dark); color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer}
+.btn{background:var(--dark); color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; transition:background 0.2s} /* Adicionado transition para modernizar */
+.btn:hover{background:#111} /* Efeito hover para modernizar */
 .btn.ghost{background:white; color:var(--dark); border:1px solid #e3e9f5}
+.btn.ghost:hover{background:#f0f0f0} /* Efeito hover para modernizar */
 .container{max-width:1100px; margin:20px auto; padding:0 18px}
 .market-sim{display:grid; grid-template-columns:1fr 380px; gap:18px; align-items:start; background-image:url('images/bg-marketplace.jpg'); background-size:cover; background-position:center; padding:18px; border-radius:12px}
 .product-card{background:#fff; border-radius:12px; padding:18px; box-shadow:0 8px 24px rgba(11,38,73,0.06)}
@@ -48,206 +49,333 @@ footer .socials img{height:24px;width:auto}
 @media(max-width:980px){ .market-sim{grid-template-columns:1fr} #map{height:260px} .market-logos{display:none} }
 </style>
 </head>
-<body>
+<body onload="initMap(); populateRecent()"> <div class="topbar">
+  <div class="brand">
+    <img src="images/logo.png" alt="PrimeExpress Logo">
+    <div class="text">
+      <div style="font-weight:700">PrimeExpress</div>
+      <div style="font-size:12px;color:var(--muted)">Transporte Premium · Rastreio em tempo real</div>
+    </div>
+  </div>
 
-<!-- header -->
-<div class="topbar">
-  <div class="brand">
-    <img src="images/logo.png" alt="PrimeExpress Logo">
-    <div class="text">
-      <div style="font-weight:700">PrimeExpress</div>
-      <div style="font-size:12px;color:var(--muted)">Transporte Premium · Rastreio em tempo real</div>
-    </div>
-  </div>
+  <div class="market-logos" title="Lojas parceiras (simulação)">
+    <img src="images/logo-amz.png" alt="Amazon">
+    <img src="images/logo-mag.png" alt="Magalu">
+    <img src="images/logo-ml.png" alt="Mercado Livre">
+      </div>
 
-  <div class="market-logos" title="Lojas parceiras (simulação)">
-    <img src="images/logo-amz.png" alt="Amazon">
-    <img src="images/logo-mag.png" alt="Magalu">
-    <img src="images/logo-ml.png" alt="Mercado Livre">
-  </div>
-
-  <div class="nav-actions">
-    <button class="btn ghost" onclick="show('home')">Home</button>
-    <button class="btn" onclick="show('rastreio')">Rastrear</button>
-    <button class="btn ghost" onclick="show('problema')">Problema / Devolução</button>
-    <button class="btn" onclick="show('sac')">SAC</button>
-  </div>
+  <div class="nav-actions">
+    <button class="btn ghost" onclick="show('home')">Home</button>
+    <button class="btn" onclick="show('rastreio')">Rastrear</button>
+    <button class="btn ghost" onclick="show('problema')">Problema / Devolução</button>
+    <button class="btn" onclick="show('sac')">SAC</button>
+  </div>
 </div>
 
-<!-- main -->
 <div class="container">
-  <!-- HOME / marketplace simulation -->
-  <section id="home" class="page active">
-    <div class="market-sim">
-      <div class="product-card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div class="small">Marketplace — Página do pedido (simulação)</div>
-            <h2 style="margin:6px 0">Smartphone X — Loja Parceira</h2>
-            <div class="small">Entrega estimada em 3 dias • PrimeExpress disponível</div>
-          </div>
-          <div style="text-align:right">
-            <div class="small">Preço</div>
-            <div style="font-weight:700">R$ 2.499,00</div>
-          </div>
-        </div>
+    <section id="home" class="page active">
+    <div class="market-sim">
+      <div class="product-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="small">Marketplace — Página do pedido (simulação)</div>
+            <h2 style="margin:6px 0">Smartphone Samsung S24 — Loja Parceira</h2>             <div class="small">Entrega estimada em 3 dias • PrimeExpress disponível</div>
+          </div>
+          <div style="text-align:right">
+            <div class="small">Preço</div>
+            <div style="font-weight:700">R$ 2.499,00</div>
+          </div>
+        </div>
 
-        <div class="product-img" style="margin-top:12px">
-          <img src="images/product1.jpg" alt="Produto Simulado">
-        </div>
+        <div class="product-img" style="margin-top:12px">
+          <img src="images/product1.jpg" alt="Produto Simulado Samsung S24">         </div>
 
-        <div class="product-info">
-          <div style="display:flex;gap:12px;align-items:center">
-            <button class="btn" onclick="simulateBuy()">Comprar com PrimeExpress</button>
-            <button class="btn ghost" onclick="openPrimeButton()">Rastrear com PrimeExpress</button>
-          </div>
+        <div class="product-info">
+          <div style="display:flex;gap:12px;align-items:center">
+            <button class="btn" onclick="simulateBuy()">Comprar com PrimeExpress</button>
+            <button class="btn ghost" onclick="openPrimeButton()">Rastrear com PrimeExpress</button>
+          </div>
 
-          <div class="features">
-            <div class="feature"><strong>Rastreamento em tempo real</strong><div class="small">Acompanhe a rota do entregador.</div></div>
-            <div class="feature"><strong>Atendimento via WhatsApp</strong><div class="small">Fale com um atendente humanizado.</div></div>
-            <div class="feature"><strong>Integração com marketplaces</strong><div class="small">Botão dentro da loja para rastrear.</div></div>
-          </div>
-        </div>
-      </div>
+          <div class="features">
+            <div class="feature"><strong>Rastreamento em tempo real</strong><div class="small">Acompanhe a rota do entregador.</div></div>
+            <div class="feature"><strong>Atendimento via WhatsApp</strong><div class="small">Fale com um atendente humanizado.</div></div>
+            <div class="feature"><strong>Integração com marketplaces</strong><div class="small">Botão dentro da loja para rastrear.</div></div>
+          </div>
+        </div>
+      </div>
 
-      <aside class="track-panel">
-        <h3>Rastreios recentes (simulação)</h3>
-        <div id="recentList" style="margin-top:8px"></div>
+      <aside class="track-panel">
+        <h3>Rastreios recentes (simulação)</h3>
+        <div id="recentList" style="margin-top:8px"></div>
 
-        <hr style="margin:12px 0;border:none;border-top:1px solid #eef6ff">
+        <hr style="margin:12px 0;border:none;border-top:1px solid #eef6ff">
 
-        <h4>Buscar pedido</h4>
-        <div class="small" style="margin-bottom:8px">Digite um ID válido (ex: PRX123456) ou gere um pedido com "Comprar".</div>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <input id="quickId" placeholder="Ex: PRX123456" />
-          <button class="btn" onclick="startTrackingFromInput()">Rastrear</button>
-        </div>
+        <h4>Buscar pedido</h4>
+        <div class="small" style="margin-bottom:8px">Digite um ID válido (ex: PRX123456) ou gere um pedido com "Comprar".</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input id="quickId" placeholder="Ex: PRX123456" />
+          <button class="btn" onclick="startTrackingFromInput('quickId')">Rastrear</button>         </div>
 
-        <div class="small" style="margin-top:8px">Atendimento: <a href="#" onclick="openWhatsAppWindow()">WhatsApp</a></div>
+        <div class="small" style="margin-top:8px">Atendimento: <a href="#" onclick="openWhatsAppWindow()">WhatsApp</a></div>
 
-        <div style="margin-top:12px" class="small">Baixar arquivo: <a id="downloadLink" href="#" download="index.html">Clique aqui para baixar este index.html</a></div>
-      </aside>
-    </div>
-  </section>
+        <div style="margin-top:12px" class="small">Baixar arquivo: <a id="downloadLink" href="#" download="index.html">Clique aqui para baixar este index.html</a></div>
+      </aside>
+    </div>
+  </section>
 
-  <!-- RASTREIO PAGE -->
-  <section id="rastreio" class="page">
-    <div style="display:flex;gap:18px;flex-wrap:wrap">
-      <div style="flex:1;min-width:320px">
-        <div class="track-panel">
-          <h3>Rastreio do pedido <span id="displayId">—</span></h3>
-          <p class="small" id="etaText">Insira um ID para iniciar a simulação.</p>
+    <section id="rastreio" class="page">
+    <div style="display:flex;gap:18px;flex-wrap:wrap">
+      <div style="flex:1;min-width:320px">
+        <div class="track-panel">
+          <h3>Rastreio do pedido <span id="displayId">—</span></h3>
+          <p class="small" id="etaText">Insira um ID para iniciar a simulação.</p>
 
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <input id="orderId" placeholder="Ex: PRX123456" />
-            <button class="btn" onclick="startTrackingFromInput()">Iniciar rastreio</button>
-          </div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <input id="orderId" placeholder="Ex: PRX123456" />
+            <button class="btn" onclick="startTrackingFromInput('orderId')">Iniciar rastreio</button>           </div>
 
-          <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">
-            <div style="flex:1">
-              <div class="small">Status</div>
-              <div id="status" style="font-weight:700">—</div>
-            </div>
-            <div style="flex:1">
-              <div class="small">Última atualização</div>
-              <div id="lastUpdate">—</div>
-            </div>
-            <div style="flex:1">
-              <div class="small">Coordenadas</div>
-              <div id="coords">—</div>
-            </div>
-          </div>
-        </div>
-      </div>
+          <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">
+            <div style="flex:1">
+              <div class="small">Status</div>
+              <div id="status" style="font-weight:700">—</div>
+            </div>
+            <div style="flex:1">
+              <div class="small">Última atualização</div>
+              <div id="lastUpdate">—</div>
+            </div>
+            <div style="flex:1">
+              <div class="small">Coordenadas</div>
+              <div id="coords">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <div style="flex:1;min-width:320px">
-        <div id="map"></div>
-      </div>
-    </div>
-  </section>
+      <div style="flex:1;min-width:320px">
+        <div id="map"></div>
+      </div>
+    </div>
+  </section>
 
-  <!-- PROBLEMA / DEVOLUCAO -->
-  <section id="problema" class="page">
-    <div class="product-card">
-      <h3>Problema com entrega / Devolução</h3>
-      <form onsubmit="event.preventDefault(); submitIssue();">
-        <label class="small">Nome</label><input id="nome" required />
-        <label class="small">E-mail</label><input id="email" type="email" required />
-        <label class="small">ID do pedido</label><input id="pedido_problema" required />
-        <label class="small">Descrição</label><textarea id="descricao" rows="4"></textarea>
-        <div style="margin-top:10px"><button class="btn" type="submit">Enviar</button></div>
-      </form>
-      <div id="issueResult" style="margin-top:12px"></div>
-    </div>
-  </section>
+    <section id="problema" class="page">
+    <div class="product-card">
+      <h3>Problema com entrega / Devolução</h3>
+      <form onsubmit="event.preventDefault(); submitIssue();">
+        <label class="small">Nome</label><input id="nome" required />
+        <label class="small">E-mail</label><input id="email" type="email" required />
+        <label class="small">ID do pedido</label><input id="pedido_problema" required />
+        <label class="small">Descrição</label><textarea id="descricao" rows="4"></textarea>
+        <div style="margin-top:10px"><button class="btn" type="submit">Enviar</button></div>
+      </form>
+      <div id="issueResult" style="margin-top:12px"></div>
+    </div>
+  </section>
 
-  <!-- SAC -->
-  <section id="sac" class="page">
-    <div class="product-card">
-      <h3>SAC — Atendimento</h3>
-      <form onsubmit="event.preventDefault(); submitSAC();">
-        <label class="small">Onde comprou?</label>
-        <select id="loja">
-          <option>Amazon</option>
-          <option>Mercado Livre</option>
-          <option>Magalu</option>
-          <option>Outro</option>
-        </select>
-        <label class="small">Mensagem</label>
-        <textarea id="sac_msg" rows="3"></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="btn" type="submit">Enviar pelo site</button>
-          <button class="btn ghost" onclick="openWhatsAppWindow()" type="button">Abrir WhatsApp</button>
-        </div>
-      </form>
-      <div id="sacResult" style="margin-top:12px"></div>
-    </div>
-  </section>
+    <section id="sac" class="page">
+    <div class="product-card">
+      <h3>SAC — Atendimento</h3>
+      <form onsubmit="event.preventDefault(); submitSAC();">
+        <label class="small">Onde comprou?</label>
+        <select id="loja">
+          <option>Amazon</option>
+          <option>Mercado Livre</option>
+          <option>Magalu</option>
+          <option>Outro</option>
+        </select>
+        <label class="small">Mensagem</label>
+        <textarea id="sac_msg" rows="3"></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn" type="submit">Enviar pelo site</button>
+          <button class="btn ghost" onclick="openWhatsAppWindow()" type="button">Abrir WhatsApp</button>
+        </div>
+      </form>
+      <div id="sacResult" style="margin-top:12px"></div>
+    </div>
+  </section>
 
 </div>
 
 <footer>
-  © PrimeExpress — Simulação para trabalho acadêmico · Desenvolvido por você
-  <div class="socials">
-    <img src="images/logo-amz.png" alt="Facebook">
-    <img src="images/logo-mag.png" alt="Instagram">
-    <img src="images/logo-ml.png" alt="LinkedIn">
-  </div>
+  © PrimeExpress — Simulação para trabalho acadêmico · Desenvolvido por você
+  <div class="socials">
+    <img src="images/logo-amz.png" alt="Facebook">     <img src="images/logo-mag.png" alt="Instagram">     <img src="images/logo-ml.png" alt="LinkedIn">   </div>
 </footer>
 
 <script>
-function show(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
-function openPrimeButton(){ openModalOptions(); }
-function openModalOptions(){ const choice = confirm('Abrir PrimeExpress? (Simulação)\\nClique OK para Rastrear, Cancel para abrir SAC'); if(choice) show('rastreio'); else show('sac'); }
+let trackingInterval; // Variável global para controlar o setInterval
+let currentOrderId = ''; // Variável global para rastrear o ID atual
 
-const sampleOrders = [
-  {id:'PRX123456', note:'Em trânsito — SP (rota padrão)'},
-  {id:'PRX234567', note:'Saiu para entrega — próximo'},
-  {id:'PRX345678', note:'Recém-coletado — a caminho do CD'},
-  {id:'PRX456789', note:'Entregue — finalizado'},
-  {id:'PRX987654', note:'Atrasado — trânsito (previsão +45 min)'},
-  {id:'PRX876543', note:'Retornado ao depósito — problema endereço'},
-  {id:'PRX112233', note:'Agendado — entrega mais tarde'},
-  {id:'PRX445566', note:'Tentativa de entrega — porteiro/porta fechada'},
-  {id:'PRX778899', note:'Rota longa — simulação internacional'},
-  {id:'PRX000111', note:'Cancelado pelo vendedor'}
-];
-
-function populateRecent(){ const box = document.getElementById('recentList'); if(!box) return; box.innerHTML = ''; sampleOrders.forEach(o=>{ const div = document.createElement('div'); div.style.marginBottom = '8px'; div.innerHTML = `<button class="btn ghost" style="width:100%;text-align:left" onclick="startTrackingPreset('${o.id}')"><strong>${o.id}</strong> — <span style="color:var(--muted)">${o.note}</span></button>`; box.appendChild(div); }); }
-
-let map, marker, routeLine;
-function initMap(){ map = L.map('map', { zoomControl:true }).setView([-23.55052, -46.633308], 12); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map); marker = L.circleMarker([-23.55, -46.63], {radius:8, color:'#0b63b7', fillColor:'#0b63b7', fillOpacity:1}).addTo(map); routeLine = L.polyline([], {color:'#0b63b7'}).addTo(map); }
-
-function simulateRoute(orderId){
-  const base = [-23.55, -46.63];
-  const points = [];
-  for(let i=0;i<6;i++){ const lat = base[0] + (Math.random()-0.5) * 0.12 * (i/5); const lng = base[1] + (Math.random()-0.5) * 0.12 * (i/5); points.push([lat,lng]); }
-  let idx = 0;
-  routeLine.setLatLngs([points[0]]);
-  marker.setLatLng(points[0]);
-  map.panTo(points[0]);
-  updateStatus('Em trânsito', points[0]);
-  const interval = setInterval(()=>{ idx++; if(idx>=points.length){ clearInterval(interval); updateStatus('Entregue', points[points.length-1]); return; } marker.setLatLng(points[idx]); const currentPoints = routeLine.getLatLngs(); currentPoints.push(points[idx]); routeLine.setLatLngs(currentPoints); map.panTo(points[idx]); updateStatus(indexToStatus(idx), points[idx]); }, 1800);
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function indexToStatus(i){ if(i===0) return 'Pedido confirmado'; if(i===1) return 'A caminho do centro de distribuição'; if(i===2) return 'Em trânsito'; if(i===3) return
+function openPrimeButton(){
+  openModalOptions();
+}
+
+function openModalOptions(){
+  const choice = confirm('Abrir PrimeExpress? (Simulação)\nClique OK para Rastrear, Cancel para abrir SAC');
+  if(choice) show('rastreio');
+  else show('sac');
+}
+
+function openWhatsAppWindow(){
+  alert('Simulando abertura do WhatsApp. URL para integração: https://wa.me/5511987654321?text=Olá,%20tenho%20uma%20dúvida%20sobre%20meu%20pedido.');
+  // Você pode mudar o alert para window.open('https://wa.me/5511987654321?text=Olá,%20tenho%20uma%20dúvida%20sobre%20meu%20pedido.', '_blank');
+}
+
+function simulateBuy(){
+  const newId = 'PRX' + Math.floor(100000 + Math.random() * 900000);
+  const newOrder = {id: newId, note: 'Geração de pedido simulada.'};
+  sampleOrders.unshift(newOrder); // Adiciona o novo pedido no topo da lista
+  populateRecent(); // Atualiza a lista
+  alert(`Parabéns! Pedido simulado com ID: ${newId}.\nClique em "Rastrear" no topo para ver o mapa.`);
+  startTrackingPreset(newId); // Inicia o rastreio do novo pedido
+}
+
+function submitIssue(){
+  const nome = document.getElementById('nome').value;
+  const email = document.getElementById('email').value;
+  const pedido = document.getElementById('pedido_problema').value;
+  const descricao = document.getElementById('descricao').value;
+  document.getElementById('issueResult').innerHTML = `<p style="color:green;font-weight:700">Obrigado, ${nome}! Problema com o pedido ${pedido} enviado com sucesso. Responderemos em ${email} em breve.</p>`;
+}
+
+function submitSAC(){
+  const loja = document.getElementById('loja').value;
+  const msg = document.getElementById('sac_msg').value;
+  document.getElementById('sacResult').innerHTML = `<p style="color:green;font-weight:700">Mensagem enviada! Sobre sua compra na ${loja}, entraremos em contato.</p>`;
+}
+
+const sampleOrders = [
+  {id:'PRX123456', note:'Em trânsito — SP (rota padrão)'},
+  {id:'PRX234567', note:'Saiu para entrega — próximo'},
+  {id:'PRX345678', note:'Recém-coletado — a caminho do CD'},
+  {id:'PRX456789', note:'Entregue — finalizado'},
+  {id:'PRX987654', note:'Atrasado — trânsito (previsão +45 min)'},
+  {id:'PRX876543', note:'Retornado ao depósito — problema endereço'},
+  {id:'PRX112233', note:'Agendado — entrega mais tarde'},
+  {id:'PRX445566', note:'Tentativa de entrega — porteiro/porta fechada'},
+  {id:'PRX778899', note:'Rota longa — simulação internacional'},
+  {id:'PRX000111', note:'Cancelado pelo vendedor'}
+];
+
+function populateRecent(){
+  const box = document.getElementById('recentList');
+  if(!box) return;
+  box.innerHTML = '';
+  sampleOrders.slice(0, 5).forEach(o=>{ // Mostra apenas os 5 mais recentes
+    const div = document.createElement('div');
+    div.style.marginBottom = '8px';
+    div.innerHTML = `<button class="btn ghost" style="width:100%;text-align:left" onclick="startTrackingPreset('${o.id}')"><strong>${o.id}</strong> — <span style="color:var(--muted)">${o.note}</span></button>`;
+    box.appendChild(div);
+  });
+}
+
+function startTrackingPreset(id){
+  document.getElementById('orderId').value = id;
+  startTracking(id);
+}
+
+// AJUSTE CRÍTICO: Função única para iniciar o rastreio do input
+function startTrackingFromInput(inputId = 'quickId'){
+  const id = document.getElementById(inputId).value.toUpperCase().trim();
+  if(id) {
+    startTracking(id);
+    show('rastreio'); // Garante que a página de rastreio seja exibida
+  } else {
+    alert('Por favor, insira um ID de pedido.');
+  }
+}
+
+
+let map, marker, routeLine;
+function initMap(){
+  map = L.map('map', { zoomControl:true }).setView([-23.55052, -46.633308], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+  // Marker inicializado, mas pode ser redefinido
+  marker = L.circleMarker([-23.55, -46.63], {radius:8, color:'#0b63b7', fillColor:'#0b63b7', fillOpacity:1}).addTo(map);
+  routeLine = L.polyline([], {color:'#0b63b7'}).addTo(map);
+}
+
+function startTracking(orderId){
+  if(trackingInterval) clearInterval(trackingInterval); // Limpa qualquer rastreio anterior
+  currentOrderId = orderId;
+  document.getElementById('displayId').textContent = orderId;
+  simulateRoute(orderId);
+  show('rastreio');
+}
+
+function updateStatus(status, coords){
+  const now = new Date();
+  document.getElementById('status').textContent = status;
+  document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('pt-BR');
+  document.getElementById('coords').textContent = `${coords[0].toFixed(5)}, ${coords[1].toFixed(5)}`;
+  
+  const orderInfo = sampleOrders.find(o => o.id === currentOrderId);
+  const eta = orderInfo ? orderInfo.note : 'Aguardando informações de rota.';
+  document.getElementById('etaText').textContent = `Entrega: ${eta}`;
+}
+
+function simulateRoute(orderId){
+  // Simulação de rota com base no ID
+  const baseLat = -23.55052 + (orderId.charCodeAt(orderId.length-1) % 10) * 0.0005; // Pequena variação para diferentes IDs
+  const baseLng = -46.633308 + (orderId.charCodeAt(orderId.length-2) % 10) * 0.0005;
+
+  const points = [];
+  for(let i=0; i<6; i++){
+    // Gera 6 pontos aleatórios simulando a rota
+    const lat = baseLat + (Math.random()-0.5) * 0.08 * (i/5) + (i * 0.008);
+    const lng = baseLng + (Math.random()-0.5) * 0.08 * (i/5) + (i * 0.008);
+    points.push([lat, lng]);
+  }
+
+  let idx = 0;
+  
+  // Reseta o mapa
+  routeLine.setLatLngs([points[0]]);
+  marker.setLatLng(points[0]);
+  map.setView(points[0], 13); // Centraliza no ponto inicial
+  updateStatus('Pedido pronto para coleta', points[0]);
+
+  // Inicia a simulação de rastreio
+  trackingInterval = setInterval(()=>{
+    idx++;
+    if(idx >= points.length){
+      clearInterval(trackingInterval);
+      updateStatus('Entregue (Simulação Finalizada)', points[points.length-1]);
+      return;
+    }
+
+    marker.setLatLng(points[idx]);
+    const currentPoints = routeLine.getLatLngs();
+    currentPoints.push(points[idx]);
+    routeLine.setLatLngs(currentPoints);
+    map.panTo(points[idx]); // Move o mapa suavemente
+
+    updateStatus(indexToStatus(idx), points[idx]);
+  }, 2500); // Atualiza a cada 2.5 segundos
+}
+
+// AJUSTE CRÍTICO: Função de status estava truncada no seu código
+function indexToStatus(i){
+  if(i === 0) return 'Pedido Coletado na Loja';
+  if(i === 1) return 'A caminho do Centro de Distribuição (CD)';
+  if(i === 2) return 'Em trânsito entre CDs';
+  if(i === 3) return 'Chegou na unidade de destino';
+  if(i === 4) return 'Saiu para entrega';
+  if(i === 5) return 'Entregue';
+  return 'Simulação de Rota (Atualização)';
+}
+
+// Inicializa o mapa e a lista de pedidos recentes ao carregar a página
+// O comando 'onload="initMap(); populateRecent()"' foi adicionado ao <body>
+// para garantir que a inicialização aconteça.
+// initMap(); 
+// populateRecent(); 
+
+</script>
+</body>
+</html>
