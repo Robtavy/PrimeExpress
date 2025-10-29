@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rastreio - PrimeExpress</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f6fa;
+}
+header {
+  background-color: #1e3799;
+  color: white;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header img {
+  height: 40px;
+}
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: 500;
+}
+.container {
+  padding: 40px;
+  text-align: center;
+}
+#map {
+  height: 400px;
+  margin-top: 30px;
+  border-radius: 12px;
+}
+input {
+  padding: 10px;
+  width: 250px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+button {
+  background-color: #1e3799;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+</style>
+</head>
+<body>
+<header>
+  <div><img src="Logo.png" alt="Logo PrimeExpress"></div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="rastrear.html">Rastrear</a>
+    <a href="#">Problema / Devolução</a>
+    <a href="#">SAC</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h2>Rastrear pedido</h2>
+  <p>Digite o código de rastreio abaixo para simular o trajeto em tempo real:</p>
+  <input type="text" id="codigo" placeholder="Ex: PRX12345">
+  <button onclick="rastrear()">Rastrear</button>
+  <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+function rastrear() {
+  const mapa = L.map('map').setView([-23.55, -46.63], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+  }).addTo(mapa);
+  const marker = L.marker([-23.55, -46.63]).addTo(mapa);
+  let pos = 0;
+  const rotas = [
+    [-23.55, -46.63],
+    [-23.56, -46.65],
+    [-23.57, -46.66],
+    [-23.58, -46.67],
+    [-23.59, -46.68]
+  ];
+  setInterval(() => {
+    if (pos < rotas.length) {
+      marker.setLatLng(rotas[pos]);
+      mapa.panTo(rotas[pos]);
+      pos++;
+    }
+  }, 1500);
+}
+</script>
+</body>
+</html>
