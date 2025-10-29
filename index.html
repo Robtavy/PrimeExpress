@@ -1,168 +1,89 @@
+
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PrimeExpress - Entregas Premium</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f6fa;
-      color: #333;
-    }
-    header {
-      background-color: #004aad;
-      color: white;
-      padding: 1.5rem;
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-    header span {
-      color: #00c6ff;
-    }
-    main {
-      padding: 2rem;
-      text-align: center;
-    }
-    .hero {
-      background: url('img/amazon.jpg') center/cover no-repeat;
-      padding: 5rem 2rem;
-      color: white;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-      border-radius: 10px;
-    }
-    .hero h2 {
-      font-size: 2rem;
-    }
-    .buttons {
-      margin-top: 2rem;
-    }
-    .buttons button {
-      margin: 0.5rem;
-      padding: 1rem 2rem;
-      background-color: #004aad;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: 0.3s;
-    }
-    .buttons button:hover {
-      background-color: #00c6ff;
-    }
-    section {
-      margin-top: 3rem;
-      display: none;
-    }
-    input, select, textarea {
-      padding: 0.8rem;
-      margin: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      width: 80%;
-      max-width: 400px;
-    }
-    #rastreamento-status {
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-    footer {
-      margin-top: 3rem;
-      background-color: #004aad;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.9rem;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrimeExpress</title>
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f6fa;
+  color: #2f3640;
+}
+header {
+  background-color: #1e3799;
+  color: white;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header img {
+  height: 40px;
+}
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: 500;
+}
+.container {
+  padding: 60px;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 2em;
+}
+.hero p {
+  color: #555;
+}
+.marketplace {
+  margin-top: 40px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  display: inline-block;
+}
+.marketplace img {
+  width: 350px;
+  border-radius: 10px;
+}
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 0.9em;
+}
+</style>
 </head>
 <body>
-  <header>
-    Prime<span>Express</span>
-  </header>
-  <main>
-    <div class="hero">
-      <h2>Entregas premium em tempo real — do clique à sua porta.</h2>
-      <div class="buttons">
-        <button onclick="showSection('rastreamento')">Rastrear Pedido</button>
-        <button onclick="showSection('problema')">Problema com Entrega</button>
-        <button onclick="showSection('devolucao')">Devolução</button>
-        <button onclick="showSection('sac')">SAC</button>
-      </div>
-    </div>
+<header>
+  <div>
+    <img src="Logo.png" alt="PrimeExpress Logo">
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="rastrear.html">Rastrear</a>
+    <a href="#">Problema / Devolução</a>
+    <a href="#">SAC</a>
+  </nav>
+</header>
 
-    <section id="rastreamento">
-      <h3>Rastreie seu pedido</h3>
-      <input type="text" id="pedidoId" placeholder="Digite o ID do pedido (ex: EXP12345)" />
-      <button onclick="rastrearPedido()">Rastrear</button>
-      <div id="rastreamento-status"></div>
-    </section>
+<div class="container">
+  <div class="hero">
+    <h1>Rastreamento premium para lojas parceiras</h1>
+    <p>Entrega em tempo real desde a coleta. Atendimento humanizado via plataforma e WhatsApp — integração com Amazon, Mercado Livre, Magalu e outras.</p>
+  </div>
 
-    <section id="problema">
-      <h3>Problema com Entrega</h3>
-      <p>Nos informe o problema encontrado. Nosso time vai entrar em contato rapidamente!</p>
-      <textarea placeholder="Descreva o problema"></textarea><br>
-      <button>Enviar</button>
-    </section>
+  <div class="marketplace">
+    <img src="logo-amz.png" alt="Página da Amazon">
+  </div>
+</div>
 
-    <section id="devolucao">
-      <h3>Solicitar Devolução</h3>
-      <p>Preencha os dados abaixo para iniciar o processo de devolução.</p>
-      <input type="text" placeholder="Número do pedido" />
-      <input type="text" placeholder="Motivo da devolução" />
-      <button>Enviar solicitação</button>
-    </section>
-
-    <section id="sac">
-      <h3>Fale com o SAC</h3>
-      <input type="text" placeholder="Seu nome" /><br>
-      <input type="email" placeholder="Seu e-mail" /><br>
-      <select>
-        <option value="">Selecione o marketplace</option>
-        <option>Amazon</option>
-        <option>Magazine Luiza</option>
-        <option>Mercado Livre</option>
-        <option>Shopee</option>
-      </select><br>
-      <textarea placeholder="Descreva sua dúvida"></textarea><br>
-      <button>Enviar mensagem</button>
-      <p>Ou fale conosco direto pelo <a href="https://wa.me/5500000000000" target="_blank">WhatsApp</a>.</p>
-    </section>
-  </main>
-  <footer>
-    <p>© 2025 PrimeExpress — Todos os direitos reservados</p>
-  </footer>
-
-  <script>
-    const pedidos = {
-      'EXP12345': 'Em trânsito — previsão de entrega: hoje, 17h',
-      'EXP98765': 'Saiu para entrega — motorista: João R.',
-      'EXP55555': 'Entregue — recebido por: M. Silva às 14h45'
-    };
-
-    function showSection(id) {
-      document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
-    }
-
-    function rastrearPedido() {
-      const id = document.getElementById('pedidoId').value.trim().toUpperCase();
-      const statusDiv = document.getElementById('rastreamento-status');
-      statusDiv.innerHTML = '<em>Carregando rastreamento...</em>';
-      setTimeout(() => {
-        if (pedidos[id]) {
-          statusDiv.textContent = pedidos[id];
-        } else {
-          statusDiv.textContent = 'Pedido não encontrado. Verifique o ID e tente novamente.';
-        }
-      }, 1000);
-    }
-  </script>
+<footer>© 2025 PrimeExpress · Todos os direitos reservados.</footer>
 </body>
 </html>
