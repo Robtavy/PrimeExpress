@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,10 +7,12 @@
 <style>
   :root{--brand:#1e3799;--accent:#0b63b7;--muted:#6b7280}
   *{box-sizing:border-box}
-  body{font-family:Inter,system-ui, -apple-system,'Segoe UI',Roboto,Arial;margin:0;color:#111;background:#f6f7fb}
-  header{background:var(--brand); color:#fff; padding:14px 28px; display:flex; align-items:center; justify-content:space-between}
+  html{scroll-behavior:smooth}
+  body{font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;margin:0;color:#111;background:#f6f7fb}
+  header{background:var(--brand); color:#fff; padding:14px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10}
   header img{height:44px}
-  nav a{color:#fff;text-decoration:none;margin-left:18px;font-weight:600}
+  nav a{color:#fff;text-decoration:none;margin-left:18px;font-weight:600;transition:opacity .2s}
+  nav a:hover{opacity:.8}
   .container{max-width:1100px;margin:32px auto;padding:0 18px}
   .hero{text-align:center;padding:24px}
   .hero h1{font-size:30px;margin:8px 0}
@@ -53,7 +54,7 @@
           <img src="logo-amz.png" alt="Marketplace - Amazon">
           <div style="flex:1">
             <h3 style="margin:0 0 8px">Como funciona</h3>
-            <p class="small">Após a compra na loja parceira, o botão <strong>"Rastrear com PrimeExpress"</strong> abre nosso portal e possibilita acompanhamento em tempo real. Podemos mostrar localização do entregador (ID), status do pedido, previsão de chegada e contato via WhatsApp.</p>
+            <p class="small">Após a compra na loja parceira, o botão <strong>"Rastrear com PrimeExpress"</strong> abre nosso portal e possibilita acompanhamento em tempo real.</p>
             <div style="margin-top:12px">
               <a class="button" href="rastrear.html">Ir para Rastreio</a>
             </div>
@@ -62,49 +63,38 @@
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px">
           <div class="card">
-            <h4 style="margin:0 0 6px">SAC — Atendimento</h4>
-            <p class="small">Atendimento humano via plataforma e WhatsApp. Clique para ir ao formulário e escolha o marketplace onde comprou.</p>
+            <h4>SAC — Atendimento</h4>
+            <p class="small">Clique para ir ao formulário e escolher o marketplace.</p>
             <div style="margin-top:8px"><a href="#sac" class="small">Ir para SAC →</a></div>
           </div>
           <div class="card">
-            <h4 style="margin:0 0 6px">Problema / Devolução</h4>
-            <p class="small">Relate problemas de entrega, solicite devolução ou reentrega. A solicitação gera um protocolo para acompanhamento.</p>
+            <h4>Problema / Devolução</h4>
+            <p class="small">Relate problemas de entrega, devolução ou reentrega.</p>
             <div style="margin-top:8px"><a href="#problema" class="small">Relatar problema →</a></div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:18px">
-          <h4 style="margin:0 0 8px">Chats e canais</h4>
-          <p class="small">WhatsApp: clique no botão abaixo para abrir conversa com atendimento. Também oferecemos chat interno no painel de acompanhamento (simulado).</p>
-          <div style="margin-top:10px">
-            <a href="https://wa.me/5511999999999?text=Ol%C3%A1%2C+preciso+de+ajuda+com+meu+pedido" target="_blank" class="button">Abrir WhatsApp</a>
           </div>
         </div>
       </div>
 
       <aside>
         <div class="card">
-          <h4 style="margin:0 0 8px">Exemplo: tela da Amazon</h4>
+          <h4>Exemplo: tela da Amazon</h4>
           <div style="text-align:center">
             <img src="logo-amz.png" alt="Amazon example" style="width:100%;max-width:260px;border-radius:8px">
           </div>
-          <p class="small" style="margin-top:10px">O botão de rastreio aparece integrado nas lojas parceiras. Aqui mostramos a imagem do marketplace para referência.</p>
+          <p class="small" style="margin-top:10px">O botão de rastreio aparece integrado nas lojas parceiras.</p>
         </div>
       </aside>
     </div>
 
     <!-- Problema / Devolução -->
-    <section id="problema" style="margin-top:28px">
+    <section id="problema" style="margin-top:40px;scroll-margin-top:90px">
       <div class="card">
         <h3>Reportar problema / Solicitar devolução</h3>
         <p class="small">Preencha os dados abaixo — nossa equipe entrará em contato.</p>
         <div style="margin-top:8px">
-          <input id="p_name" placeholder="Seu nome" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px">
-          <br><br>
-          <input id="p_order" placeholder="ID do pedido" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px">
-          <br><br>
-          <textarea id="p_desc" placeholder="Descreva o problema" style="width:80%;max-width:560px;height:90px;padding:10px;border-radius:6px;border:1px solid #ddd"></textarea>
-          <br><br>
+          <input id="p_name" placeholder="Seu nome" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px"><br><br>
+          <input id="p_order" placeholder="ID do pedido" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px"><br><br>
+          <textarea id="p_desc" placeholder="Descreva o problema" style="width:80%;max-width:560px;height:90px;padding:10px;border-radius:6px;border:1px solid #ddd"></textarea><br><br>
           <button onclick="sendProblem()" style="background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer">Enviar</button>
           <div id="p_result" style="margin-top:10px"></div>
         </div>
@@ -112,10 +102,10 @@
     </section>
 
     <!-- SAC -->
-    <section id="sac" style="margin-top:18px">
+    <section id="sac" style="margin-top:40px;scroll-margin-top:90px">
       <div class="card">
         <h3>SAC — Fale conosco</h3>
-        <p class="small">Escolha onde comprou, descreva sua solicitação e envie. Ou abra o WhatsApp para atendimento imediato.</p>
+        <p class="small">Escolha onde comprou, descreva sua solicitação e envie.</p>
         <div style="margin-top:8px">
           <input id="s_name" placeholder="Seu nome" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px"><br><br>
           <input id="s_email" placeholder="Seu e-mail" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px"><br><br>
@@ -124,7 +114,7 @@
           </select><br><br>
           <textarea id="s_msg" placeholder="Mensagem" style="width:80%;max-width:560px;height:90px;padding:10px;border-radius:6px;border:1px solid #ddd"></textarea><br><br>
           <button onclick="sendSAC()" style="background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer">Enviar</button>
-          <a href="https://wa.me/5511999999999?text=Ol%C3%A1,+preciso+de+ajuda+com+meu+pedido" target="_blank" style="display:inline-block;margin-left:12px;padding:10px 14px;border-radius:8px;background:#eee;color:#111;text-decoration:none">WhatsApp</a>
+          <a href="https://wa.me/5511999999999?text=Olá,+preciso+de+ajuda+com+meu+pedido" target="_blank" style="display:inline-block;margin-left:12px;padding:10px 14px;border-radius:8px;background:#eee;color:#111;text-decoration:none">WhatsApp</a>
           <div id="s_result" style="margin-top:10px"></div>
         </div>
       </div>
@@ -136,14 +126,14 @@
 
 <script>
 function sendProblem(){
-  const name = document.getElementById('p_name').value || 'Cliente';
-  const order = document.getElementById('p_order').value || '(sem ID)';
-  document.getElementById('p_result').innerHTML = '<div style="padding:10px;background:#f0fbff;border:1px solid #cfe7ff;border-radius:8px">Obrigado, '+name+'. Protocolo gerado para o pedido '+order+'. Nossa equipe entrará em contato.</div>';
+  const name = p_name.value || 'Cliente';
+  const order = p_order.value || '(sem ID)';
+  p_result.innerHTML = `<div style="padding:10px;background:#f0fbff;border:1px solid #cfe7ff;border-radius:8px">Obrigado, ${name}. Protocolo gerado para o pedido ${order}. Nossa equipe entrará em contato.</div>`;
 }
 function sendSAC(){
-  const name = document.getElementById('s_name').value || 'Cliente';
-  const market = document.getElementById('s_market').value;
-  document.getElementById('s_result').innerHTML = '<div style="padding:10px;background:#f0fbff;border:1px solid #cfe7ff;border-radius:8px">Mensagem enviada. Obrigado, '+name+'. Atendimento referente a: '+market+'.</div>';
+  const name = s_name.value || 'Cliente';
+  const market = s_market.value;
+  s_result.innerHTML = `<div style="padding:10px;background:#f0fbff;border:1px solid #cfe7ff;border-radius:8px">Mensagem enviada. Obrigado, ${name}. Atendimento referente a: ${market}.</div>`;
 }
 </script>
 </body>
