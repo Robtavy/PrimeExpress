@@ -1,298 +1,144 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PrimeExpress | Rastrear Pedido</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: #f8f9fa;
-      color: #0b1727;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background: #0b63b7;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-      font-size: 1.3rem;
-      letter-spacing: 1px;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 30px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .controls input {
-      flex: 1;
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
-    .controls button {
-      background: #0b63b7;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .controls button:hover {
-      background: #094d8a;
-    }
-
-    #map {
-      height: 320px;
-      border-radius: 12px;
-      margin-top: 15px;
-    }
-
-    .wrap {
-      margin-top: 20px;
-    }
-
-    .info p {
-      margin: 6px 0;
-    }
-
-    #history {
-      margin-top: 18px;
-      padding: 12px;
-      background: #f3f5f8;
-      border-radius: 8px;
-      display: none;
-    }
-
-    #timeline li {
-      list-style: none;
-      padding: 4px 0;
-      border-left: 3px solid #0b63b7;
-      margin-left: 10px;
-      padding-left: 10px;
-      color: #333;
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PrimeExpress — Rastrear</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<style>
+  body{font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;margin:0;background:#f6f7fb;color:#111}
+  header{background:#1e3799;color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+  header img{height:40px}
+  nav a{color:#fff;text-decoration:none;margin-left:16px;font-weight:600}
+  .wrap{max-width:1100px;margin:28px auto;padding:0 18px}
+  h1{text-align:center}
+  .controls{text-align:center;margin-top:12px}
+  input{padding:12px;border-radius:10px;border:1px solid #ddd;width:300px;max-width:90%}
+  button{padding:10px 14px;margin-left:10px;border-radius:10px;border:none;background:#0b63b7;color:#fff;cursor:pointer}
+  #map{height:320px;border-radius:12px;margin-top:18px;box-shadow:0 8px 24px rgba(11,38,73,0.06)}
+  .panel{background:#fff;padding:14px;margin-top:14px;border-radius:10px;box-shadow:0 6px 18px rgba(11,38,73,0.04)}
+  .muted{color:#6b7280}
+  .details strong{color:#0b63b7}
+  @media(max-width:720px){ .row{flex-direction:column} }
+</style>
 </head>
 <body>
+<header>
+  <div style="display:flex;align-items:center;gap:12px">
+    <img src="Logo.png" alt="Logo">
+    <strong>PrimeExpress</strong>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="rastrear.html">Rastrear</a>
+  </nav>
+</header>
 
-  <header>🚚 PrimeExpress — Rastreamento em Tempo Real</header>
+<main class="wrap">
+  <h1>Rastrear pedido</h1>
+  <p style="text-align:center;color:#6b7280">Digite o código de rastreio para acompanhar sua entrega em tempo real.</p>
 
-  <div class="container">
-    <div class="controls">
-      <input id="code" placeholder="Digite o código de rastreio (ex: PRX123456)">
-      <button onclick="startTrack()">Rastrear</button>
-    </div>
-
-    <div id="map"></div>
-
-    <div class="wrap">
-      <div class="info">
-        <p><strong>ID Pedido:</strong> <span id="info_id">—</span></p>
-        <p><strong>Status:</strong> <span id="info_status">—</span></p>
-        <p><strong>Localização Atual:</strong> <span id="info_loc">—</span></p>
-        <p><strong>Motorista:</strong> <span id="info_driver">—</span></p>
-        <p><strong>Previsão de Entrega:</strong> <span id="info_eta">—</span></p>
-      </div>
-
-      <div id="history">
-        <strong>Histórico de Eventos:</strong>
-        <ul id="timeline"></ul>
-      </div>
-    </div>
+  <div class="controls">
+    <input id="code" placeholder="Ex: PX10245BR" />
+    <button onclick="startTrack()">Rastrear</button>
   </div>
 
-  <!-- Scripts -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
+  <div id="map"></div>
+
+  <div id="info" class="panel">
+    <div id="info_text" class="muted">Informe um código de rastreio acima para começar.</div>
+  </div>
+
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+  // Simulação de pedidos
   const sample = {
-    'PRX123456': {
-      status: 'Em trânsito',
-      loc: 'Rua Oscar Freire, Pinheiros - SP',
-      driver: 'driver-4582',
-      eta: '~35 minutos',
-      last_update: '11:08:22',
-      speed_kmh: '28 km/h (média)',
-      package: '1x Smartphone - frágil',
-      next_step: 'Rota alternativa aplicada — seguindo pela R. Haddock Lobo',
-      route: [
-        [-23.5597,-46.6625],
-        [-23.5570,-46.6650],
-        [-23.5540,-46.6675],
-        [-23.5510,-46.6690]
-      ],
-      history: [
-        {time:'08:00', text:'Pedido confirmado no sistema pela loja.'},
-        {time:'09:15', text:'Coleta realizada no centro de distribuição local.'},
-        {time:'10:00', text:'Veículo saiu do centro de distribuição (ID veículo: V-2211).'},
-        {time:'10:40', text:'Entrou em tráfego intenso na Av. Paulista; rota alternativa aplicada às 10:42.'}
-      ]
+    'PX10245BR': {
+      status:'Saiu para entrega 🚚',
+      loc:'Avenida Paulista, São Paulo - SP',
+      driver:'MTR-2025A',
+      eta:'18:30h (previsão)',
+      details:`Pedido coletado no centro logístico às 16:45h. O entregador já está a caminho da região dos Jardins. O cliente será notificado por SMS 15 minutos antes da chegada.`,
+      route:[[-23.5617,-46.6559],[-23.5601,-46.6600],[-23.5580,-46.6632],[-23.5562,-46.6665],[-23.5540,-46.6689]]
     },
-    'PRX234567': {
-      status: 'Saiu para entrega',
-      loc: 'Alameda Santos, Jardins - SP',
-      driver: 'driver-9911',
-      eta: '~12 minutos',
-      last_update: '14:06:05',
-      speed_kmh: '18 km/h (zona urbana)',
-      package: '2x Acessórios - embalagem leve',
-      next_step: 'Tentativa de contato com cliente para instruções de entrega',
-      route: [
-        [-23.5712,-46.6459],
-        [-23.5690,-46.6469],
-        [-23.5660,-46.6480]
-      ],
-      history: [
-        {time:'09:00', text:'Pedido recebido e separado no CD.'},
-        {time:'09:50', text:'Carregado no veículo de entrega (ID rota R-77).'},
-        {time:'10:30', text:'Saiu para entrega - priority flag.'},
-        {time:'13:55', text:'Parada para reabastecimento - 3 minutos.'}
-      ]
+    'PX87633RJ': {
+      status:'Em rota final 🏙️',
+      loc:'Copacabana, Rio de Janeiro - RJ',
+      driver:'MTR-876B',
+      eta:'17:45h (previsão)',
+      details:`Pedido passou pelo túnel Rebouças às 16:55h e segue para entrega na Rua Figueiredo Magalhães. Será necessária assinatura digital no app do entregador.`,
+      route:[[-22.9711,-43.1856],[-22.9695,-43.1879],[-22.9672,-43.1902],[-22.9650,-43.1921]]
     },
-    'PRX987654': {
-      status: 'Atrasado (trânsito intenso)',
-      loc: 'Marginal Tietê - sentido Leste - SP',
-      driver: 'driver-1023',
-      eta: '+45 minutos (previsão atualizada)',
-      last_update: '16:22:40',
-      speed_kmh: '10 km/h (parcialmente parado)',
-      package: '1x Geladeira - volume grande (necessita dois operadores)',
-      next_step: 'Aguardar normalização do tráfego; cliente notificado via WhatsApp',
-      route: [
-        [-23.5270,-46.4960],
-        [-23.5300,-46.4850],
-        [-23.5330,-46.4750],
-        [-23.5360,-46.4650]
-      ],
-      history: [
-        {time:'07:40', text:'Pedido confirmado.'},
-        {time:'08:20', text:'Coleta concluída no CD.'},
-        {time:'09:50', text:'Alerta: tráfego pesado na via expressa; status alterado.'}
-      ]
+    'PX99112MG': {
+      status:'Em conferência no centro logístico 📦',
+      loc:'Praça Sete, Belo Horizonte - MG',
+      driver:'MTR-991C',
+      eta:'Saída prevista: 14:00h',
+      details:`O pedido está sendo conferido e lacrado no centro logístico. Assim que liberado, o motorista seguirá para o bairro de destino.`,
+      route:[[-19.9188,-43.9378],[-19.9205,-43.9350],[-19.9220,-43.9322]]
     }
   };
 
-  let map = L.map('map').setView([-23.55,-46.63], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-  let marker = L.circleMarker([-23.55,-46.63], {radius:8, color:'#0b63b7', fillColor:'#0b63b7', fillOpacity:1}).addTo(map);
+  // Mapa base
+  let map = L.map('map', {zoomControl:true}).setView([-23.55,-46.63], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  let marker = L.circleMarker([-23.55,-46.63], {radius:8,color:'#0b63b7',fillColor:'#0b63b7',fillOpacity:1}).addTo(map);
   let poly = L.polyline([], {color:'#0b63b7'}).addTo(map);
-
-  function clearTrackingInterval(){
-    if(window.__trackInterval) {
-      clearInterval(window.__trackInterval);
-      window.__trackInterval = null;
-    }
-  }
-
-  function showHistory(historyArray){
-    const historyDiv = document.getElementById('history');
-    const timeline = document.getElementById('timeline');
-    timeline.innerHTML = '';
-    historyArray.forEach(ev => {
-      const li = document.createElement('li');
-      li.textContent = `${ev.time} — ${ev.text}`;
-      timeline.appendChild(li);
-    });
-    historyDiv.style.display = 'block';
-  }
-
-  function updateDetails(code, data){
-    document.getElementById('info_id').textContent = code;
-    document.getElementById('info_status').textContent = data.status;
-    document.getElementById('info_loc').textContent = data.loc;
-    document.getElementById('info_driver').textContent = data.driver;
-    document.getElementById('info_eta').textContent = data.eta;
-
-    let detailsBox = document.getElementById('extended_details');
-    if(!detailsBox){
-      detailsBox = document.createElement('div');
-      detailsBox.id = 'extended_details';
-      detailsBox.style.marginTop = '12px';
-      detailsBox.style.padding = '12px';
-      detailsBox.style.borderRadius = '8px';
-      detailsBox.style.background = '#fff';
-      detailsBox.style.boxShadow = '0 6px 18px rgba(11,38,73,0.04)';
-      document.querySelector('.wrap').appendChild(detailsBox);
-    }
-    detailsBox.innerHTML = `
-      <strong>Última atualização:</strong> ${data.last_update} &nbsp; • &nbsp;
-      <strong>Velocidade média:</strong> ${data.speed_kmh} &nbsp; • &nbsp;
-      <strong>Carga:</strong> ${data.package} <br>
-      <strong>Próximo passo:</strong> ${data.next_step}
-    `;
-  }
-
-  function animateRoute(points, onComplete){
-    clearTrackingInterval();
-    poly.setLatLngs([points[0]]);
-    marker.setLatLng(points[0]);
-    map.panTo(points[0]);
-    let i = 0;
-    window.__trackInterval = setInterval(()=>{
-      i++;
-      if(i >= points.length){
-        clearTrackingInterval();
-        if(typeof onComplete === 'function') onComplete();
-        return;
-      }
-      const pt = points[i];
-      marker.setLatLng(pt);
-      poly.addLatLng(pt);
-      map.panTo(pt);
-    }, 1400);
-  }
 
   function startTrack(){
     const code = (document.getElementById('code').value || '').trim().toUpperCase();
-    if(!code){ alert('Informe o código de rastreio.'); return; }
+    const infoBox = document.getElementById('info_text');
+
+    if(!code){
+      alert('Informe o código de rastreio.');
+      return;
+    }
 
     const data = sample[code];
-    document.getElementById('info_id').textContent = code || '—';
     if(!data){
-      document.getElementById('info_status').textContent = 'Pedido não encontrado';
-      document.getElementById('info_loc').textContent = '—';
-      document.getElementById('info_driver').textContent = '—';
-      document.getElementById('info_eta').textContent = '—';
-      document.getElementById('history').style.display = 'none';
+      infoBox.innerHTML = `<p style="color:red;">❌ Código não encontrado. Verifique e tente novamente.</p>`;
+      map.setView([-23.55,-46.63], 12);
+      marker.setLatLng([-23.55,-46.63]);
       poly.setLatLngs([]);
       return;
     }
 
-    updateDetails(code, data);
-    showHistory(data.history);
-    animateRoute(data.route, ()=>{
-      const timeline = document.getElementById('timeline');
-      const li = document.createElement('li');
-      const timeNow = new Date().toLocaleTimeString();
-      li.textContent = `${timeNow} — Entregue (simulação)`;
-      timeline.appendChild(li);
-      document.getElementById('info_status').textContent = 'Entregue (simulação)';
-    });
-  }
+    // Exibir detalhes
+    infoBox.innerHTML = `
+      <div class="details">
+        <strong>Status:</strong> ${data.status}<br>
+        <strong>Localização atual:</strong> ${data.loc}<br>
+        <strong>Motorista:</strong> ${data.driver}<br>
+        <strong>Previsão:</strong> ${data.eta}<br><br>
+        ${data.details}
+      </div>
+    `;
 
-  document.addEventListener('DOMContentLoaded', ()=>{
-    document.getElementById('history').style.display = 'none';
-  });
-  </script>
+    // Preparar mapa
+    const points = data.route;
+    map.setView(points[0], 14);
+    marker.setLatLng(points[0]);
+    poly.setLatLngs([points[0]]);
+
+    // Animação do trajeto
+    if(window.__trackInterval) clearInterval(window.__trackInterval);
+    let i = 0;
+    window.__trackInterval = setInterval(()=>{
+      i++;
+      if(i >= points.length){
+        clearInterval(window.__trackInterval);
+        infoBox.innerHTML += `<br><br><strong>Status atualizado:</strong> Entregue ✅`;
+        return;
+      }
+      marker.setLatLng(points[i]);
+      const current = poly.getLatLngs();
+      current.push(points[i]);
+      poly.setLatLngs(current);
+      map.panTo(points[i]);
+    }, 1400);
+  }
+</script>
 </body>
 </html>
