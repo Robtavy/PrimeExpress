@@ -20,6 +20,8 @@
   .row{display:flex;gap:12px;flex-wrap:wrap}
   .col{flex:1;min-width:220px}
   .muted{color:#6b7280}
+  ul.timeline{list-style:none;padding-left:18px;margin-top:10px;}
+  ul.timeline li{padding:6px 0;border-left:3px solid #0b63b7;margin-left:10px;padding-left:10px;}
   @media(max-width:720px){ .row{flex-direction:column} }
 </style>
 </head>
@@ -31,7 +33,7 @@
 
 <main class="wrap">
   <h1>Rastrear pedido</h1>
-  <p style="text-align:center;color:#6b7280">Digite o código de rastreio para ver a localização e informações do pedido (simulação).</p>
+  <p style="text-align:center;color:#6b7280">Digite o código de rastreio para ver a localização e informações do pedido.</p>
 
   <div class="controls">
     <input id="code" placeholder="Ex: PRX123456" />
@@ -44,103 +46,112 @@
   <div id="map"></div>
 
   <div class="panel row" style="margin-top:14px">
-    <div class="col">
-      <div><strong>Pedido</strong></div>
-      <div id="info_id" class="muted">—</div>
-    </div>
-    <div class="col">
-      <div><strong>Status</strong></div>
-      <div id="info_status" class="muted">—</div>
-    </div>
-    <div class="col">
-      <div><strong>Local atual</strong></div>
-      <div id="info_loc" class="muted">—</div>
-    </div>
-    <div class="col">
-      <div><strong>Motorista (ID)</strong></div>
-      <div id="info_driver" class="muted">—</div>
-    </div>
-    <div class="col">
-      <div><strong>Previsão</strong></div>
-      <div id="info_eta" class="muted">—</div>
-    </div>
+    <div class="col"><strong>Pedido</strong><div id="info_id" class="muted">—</div></div>
+    <div class="col"><strong>Status</strong><div id="info_status" class="muted">—</div></div>
+    <div class="col"><strong>Local atual</strong><div id="info_loc" class="muted">—</div></div>
+    <div class="col"><strong>Motorista (ID)</strong><div id="info_driver" class="muted">—</div></div>
+    <div class="col"><strong>Previsão</strong><div id="info_eta" class="muted">—</div></div>
+  </div>
+
+  <!-- Histórico detalhado -->
+  <div id="history" class="panel" style="display:none">
+    <h3>Histórico de eventos</h3>
+    <ul id="timeline" class="timeline"></ul>
   </div>
 
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script>
-  // Sample data mapped to codes (you can expand)
-  const sample = {
-    'PRX123456': {
-      status:'Em trânsito',
-      loc:'Rua Oscar Freire, Pinheiros - SP',
-      driver:'driver-4582',
-      eta:'~35 minutos',
-      route:[[-23.5597,-46.6625],[-23.5570,-46.6650],[-23.5540,-46.6675],[-23.5510,-46.6690]]
-    },
-    'PRX234567': {
-      status:'Saiu para entrega',
-      loc:'Alameda Santos, Jardins - SP',
-      driver:'driver-9911',
-      eta:'~12 minutos',
-      route:[[-23.5712,-46.6459],[-23.5690,-46.6469],[-23.5660,-46.6480]]
-    },
-    'PRX987654': {
-      status:'Atrasado (trânsito)',
-      loc:'Marginal Tietê - sentido Leste - SP',
-      driver:'driver-1023',
-      eta:'+45 minutos (previsão atualizada)',
-      route:[[-23.5270,-46.4960],[-23.5300,-46.4850],[-23.5330,-46.4750],[-23.5360,-46.4650]]
-    }
-  };
+const sample = {
+  'PRX123456': {
+    status:'Em trânsito',
+    loc:'Rua Oscar Freire, Pinheiros - SP',
+    driver:'driver-4582',
+    eta:'~35 minutos',
+    route:[[-23.5597,-46.6625],[-23.5570,-46.6650],[-23.5540,-46.6675],[-23.5510,-46.6690]],
+    history:[
+      'Pedido recebido — 08:00',
+      'Coleta realizada — 09:15',
+      'Saiu do centro de distribuição — 10:00',
+      'Em trânsito — 10:40'
+    ]
+  },
+  'PRX234567': {
+    status:'Saiu para entrega',
+    loc:'Alameda Santos, Jardins - SP',
+    driver:'driver-9911',
+    eta:'~12 minutos',
+    route:[[-23.5712,-46.6459],[-23.5690,-46.6469],[-23.5660,-46.6480]],
+    history:[
+      'Pedido recebido — 09:00',
+      'Coleta realizada — 09:50',
+      'Saiu para entrega — 10:30'
+    ]
+  },
+  'PRX987654': {
+    status:'Atrasado (trânsito)',
+    loc:'Marginal Tietê - sentido Leste - SP',
+    driver:'driver-1023',
+    eta:'+45 minutos (previsão atualizada)',
+    route:[[-23.5270,-46.4960],[-23.5300,-46.4850],[-23.5330,-46.4750],[-23.5360,-46.4650]],
+    history:[
+      'Pedido recebido — 07:40',
+      'Coleta realizada — 08:20',
+      'Atraso reportado — 09:50 (Trânsito intenso)'
+    ]
+  }
+};
 
-  // Leaflet setup (init empty map)
-  let map = L.map('map', {zoomControl:true}).setView([-23.55,-46.63], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-  let marker = L.circleMarker([-23.55,-46.63], {radius:8,color:'#0b63b7',fillColor:'#0b63b7',fillOpacity:1}).addTo(map);
-  let poly = L.polyline([], {color:'#0b63b7'}).addTo(map);
+let map = L.map('map', {zoomControl:true}).setView([-23.55,-46.63], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+let marker = L.circleMarker([-23.55,-46.63], {radius:8,color:'#0b63b7',fillColor:'#0b63b7',fillOpacity:1}).addTo(map);
+let poly = L.polyline([], {color:'#0b63b7'}).addTo(map);
 
-  function fillSample(code){ document.getElementById('code').value = code; startTrack(); }
+function fillSample(code){ document.getElementById('code').value = code; startTrack(); }
 
-  function startTrack(){
-    const code = (document.getElementById('code').value || '').trim().toUpperCase();
-    if(!code){ alert('Informe o código de rastreio.'); return; }
-    // show basic info
-    const data = sample[code];
-    document.getElementById('info_id').textContent = code;
-    if(!data){
-      document.getElementById('info_status').textContent = 'Pedido não encontrado';
-      document.getElementById('info_loc').textContent = '—';
-      document.getElementById('info_driver').textContent = '—';
-      document.getElementById('info_eta').textContent = '—';
+function startTrack(){
+  const code = (document.getElementById('code').value || '').trim().toUpperCase();
+  if(!code){ alert('Informe o código de rastreio.'); return; }
+  const data = sample[code];
+  document.getElementById('info_id').textContent = code;
+  if(!data){
+    document.getElementById('info_status').textContent = 'Pedido não encontrado';
+    document.getElementById('history').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('info_status').textContent = data.status;
+  document.getElementById('info_loc').textContent = data.loc;
+  document.getElementById('info_driver').textContent = data.driver;
+  document.getElementById('info_eta').textContent = data.eta;
+
+  // Mostrar histórico detalhado
+  const list = document.getElementById('timeline');
+  list.innerHTML = '';
+  data.history.forEach(h => {
+    const li = document.createElement('li');
+    li.textContent = h;
+    list.appendChild(li);
+  });
+  document.getElementById('history').style.display = 'block';
+
+  // Simular rota
+  const points = data.route;
+  let i = 0;
+  poly.setLatLngs([]);
+  marker.setLatLng(points[0]);
+  map.panTo(points[0]);
+  if(window.__trackInterval) clearInterval(window.__trackInterval);
+  window.__trackInterval = setInterval(()=>{
+    i++;
+    if(i>=points.length){
+      clearInterval(window.__trackInterval);
+      document.getElementById('info_status').textContent = 'Entregue (simulação)';
+      const li = document.createElement('li');
+      li.textContent = 'Entregue — ' + new Date().toLocaleTimeString();
+      document.getElementById('timeline').appendChild(li);
       return;
     }
-    document.getElementById('info_status').textContent = data.status;
-    document.getElementById('info_loc').textContent = data.loc;
-    document.getElementById('info_driver').textContent = data.driver;
-    document.getElementById('info_eta').textContent = data.eta;
-
-    // animate along route
-    const points = data.route;
-    let i = 0;
-    poly.setLatLngs([]);
-    marker.setLatLng(points[0]);
-    map.panTo(points[0]);
-    // clear any previous interval
-    if(window.__trackInterval) clearInterval(window.__trackInterval);
-    window.__trackInterval = setInterval(()=>{
-      i++;
-      if(i>=points.length){ clearInterval(window.__trackInterval); document.getElementById('info_status').textContent = (data.status === 'Atrasado (trânsito)') ? 'Atrasado — aguardando normalização' : 'Entregue (simulação)'; return; }
-      marker.setLatLng(points[i]);
-      const current = poly.getLatLngs();
-      current.push(points[i]);
-      poly.setLatLngs(current);
-      map.panTo(points[i]);
-      // optionally update ETA dynamically (simple decrement simulation)
-      // (not implemented complexly here)
-    }, 1400);
-  }
-</script>
-</body>
-</html>
+    marker.setLatLng(points[i]);
+    poly.addLatLng(points
