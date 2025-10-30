@@ -2,88 +2,149 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PrimeExpress</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PrimeExpress — Home</title>
 <style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f5f6fa;
-  color: #2f3640;
-}
-header {
-  background-color: #1e3799;
-  color: white;
-  padding: 20px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-header img {
-  height: 40px;
-}
-nav a {
-  color: white;
-  text-decoration: none;
-  margin-left: 20px;
-  font-weight: 500;
-}
-.container {
-  padding: 60px;
-  text-align: center;
-}
-.hero h1 {
-  font-size: 2em;
-}
-.hero p {
-  color: #555;
-}
-.marketplace {
-  margin-top: 40px;
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-  display: inline-block;
-}
-.marketplace img {
-  width: 350px;
-  border-radius: 10px;
-}
-footer {
-  text-align: center;
-  padding: 20px;
-  color: #999;
-  font-size: 0.9em;
-}
+  :root{--brand:#1e3799;--accent:#0b63b7;--muted:#6b7280}
+  *{box-sizing:border-box}
+  body{font-family:Inter,system-ui, -apple-system,'Segoe UI',Roboto,Arial;margin:0;color:#111;background:#f6f7fb}
+  header{background:var(--brand); color:#fff; padding:14px 28px; display:flex; align-items:center; justify-content:space-between}
+  header img{height:44px}
+  nav a{color:#fff;text-decoration:none;margin-left:18px;font-weight:600}
+  .container{max-width:1100px;margin:32px auto;padding:0 18px}
+  .hero{text-align:center;padding:24px}
+  .hero h1{font-size:30px;margin:8px 0}
+  .hero p{color:var(--muted);max-width:900px;margin:0 auto}
+  .market-card{margin:28px auto 0;background:#fff;padding:22px;border-radius:12px;box-shadow:0 8px 20px rgba(11,38,73,0.06);display:flex;align-items:center;gap:22px;max-width:820px}
+  .market-card img{width:360px;border-radius:8px}
+  .info-section{display:grid;grid-template-columns:1fr;gap:18px;margin-top:28px}
+  .card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(11,38,73,0.04)}
+  .two-cols{display:grid;grid-template-columns:1fr 320px;gap:18px}
+  .small{color:var(--muted);font-size:14px}
+  footer{padding:22px;text-align:center;color:var(--muted);margin-top:30px}
+  a.button{display:inline-block;padding:10px 14px;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none}
+  @media(max-width:900px){ .two-cols{grid-template-columns:1fr} .market-card img{width:100%} header{padding:12px} }
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <img src="Logo.png" alt="PrimeExpress Logo">
-  </div>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="rastrear.html">Rastrear</a>
-    <a href="#">Problema / Devolução</a>
-    <a href="#">SAC</a>
-  </nav>
-</header>
+  <header>
+    <div style="display:flex;align-items:center;gap:12px">
+      <img src="Logo.png" alt="PrimeExpress logo">
+      <div style="font-weight:700">PrimeExpress</div>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="rastrear.html">Rastrear</a>
+      <a href="#problema">Problema / Devolução</a>
+      <a href="#sac">SAC</a>
+    </nav>
+  </header>
 
-<div class="container">
-  <div class="hero">
-    <h1>Rastreamento premium para lojas parceiras</h1>
-    <p>Entrega em tempo real desde a coleta. Atendimento humanizado via plataforma e WhatsApp — integração com Amazon, Mercado Livre, Magalu e outras.</p>
-  </div>
+  <main class="container">
+    <section class="hero">
+      <h1>Rastreamento premium para lojas parceiras</h1>
+      <p>Entrega em tempo real desde a coleta. Atendimento humanizado via plataforma e WhatsApp — integração com Amazon, Mercado Livre, Magalu e outras.</p>
+    </section>
 
-  <div class="marketplace">
-    <img src="logo-amz.png" alt="Página da Amazon">
-  </div>
-</div>
+    <div class="two-cols">
+      <div>
+        <div class="market-card">
+          <img src="logo-amz.png" alt="Marketplace - Amazon">
+          <div style="flex:1">
+            <h3 style="margin:0 0 8px">Como funciona</h3>
+            <p class="small">Após a compra na loja parceira, o botão <strong>"Rastrear com PrimeExpress"</strong> abre nosso portal e possibilita acompanhamento em tempo real. Podemos mostrar localização do entregador (ID), status do pedido, previsão de chegada e contato via WhatsApp.</p>
+            <div style="margin-top:12px">
+              <a class="button" href="rastrear.html">Ir para Rastreio</a>
+            </div>
+          </div>
+        </div>
 
-<footer>© 2025 PrimeExpress · Todos os direitos reservados.</footer>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px">
+          <div class="card">
+            <h4 style="margin:0 0 6px">SAC — Atendimento</h4>
+            <p class="small">Atendimento humano via plataforma e WhatsApp. Clique para ir ao formulário e escolha o marketplace onde comprou.</p>
+            <div style="margin-top:8px"><a href="#sac" class="small">Ir para SAC →</a></div>
+          </div>
+          <div class="card">
+            <h4 style="margin:0 0 6px">Problema / Devolução</h4>
+            <p class="small">Relate problemas de entrega, solicite devolução ou reentrega. A solicitação gera um protocolo para acompanhamento.</p>
+            <div style="margin-top:8px"><a href="#problema" class="small">Relatar problema →</a></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <h4 style="margin:0 0 8px">Chats e canais</h4>
+          <p class="small">WhatsApp: clique no botão abaixo para abrir conversa com atendimento. Também oferecemos chat interno no painel de acompanhamento (simulado).</p>
+          <div style="margin-top:10px">
+            <a href="https://wa.me/5511999999999?text=Ol%C3%A1%2C+preciso+de+ajuda+com+meu+pedido" target="_blank" class="button">Abrir WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <h4 style="margin:0 0 8px">Exemplo: tela da Amazon</h4>
+          <div style="text-align:center">
+            <img src="logo-amz.png" alt="Amazon example" style="width:100%;max-width:260px;border-radius:8px">
+          </div>
+          <p class="small" style="margin-top:10px">O botão de rastreio aparece integrado nas lojas parceiras. Aqui mostramos a imagem do marketplace para referência.</p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Problema / Devolução -->
+    <section id="problema" style="margin-top:28px">
+      <div class="card">
+        <h3>Reportar problema / Solicitar devolução</h3>
+        <p class="small">Preencha os dados abaixo — nossa equipe entrará em contato.</p>
+        <div style="margin-top:8px">
+          <input id="p_name" placeholder="Seu nome" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px">
+          <br><br>
+          <input id="p_order" placeholder="ID do pedido" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px">
+          <br><br>
+          <textarea id="p_desc" placeholder="Descreva o problema" style="width:80%;max-width:560px;height:90px;padding:10px;border-radius:6px;border:1px solid #ddd"></textarea>
+          <br><br>
+          <button onclick="sendProblem()" style="background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer">Enviar</button>
+          <div id="p_result" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SAC -->
+    <section id="sac" style="margin-top:18px">
+      <div class="card">
+        <h3>SAC — Fale conosco</h3>
+        <p class="small">Escolha onde comprou, descreva sua solicitação e envie. Ou abra o WhatsApp para atendimento imediato.</p>
+        <div style="margin-top:8px">
+          <input id="s_name" placeholder="Seu nome" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px"><br><br>
+          <input id="s_email" placeholder="Seu e-mail" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px"><br><br>
+          <select id="s_market" style="padding:10px;border-radius:6px;border:1px solid #ddd;width:60%;max-width:360px">
+            <option>Amazon</option><option>Mercado Livre</option><option>Magalu</option><option>Shopee</option>
+          </select><br><br>
+          <textarea id="s_msg" placeholder="Mensagem" style="width:80%;max-width:560px;height:90px;padding:10px;border-radius:6px;border:1px solid #ddd"></textarea><br><br>
+          <button onclick="sendSAC()" style="background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer">Enviar</button>
+          <a href="https://wa.me/5511999999999?text=Ol%C3%A1,+preciso+de+ajuda+com+meu+pedido" target="_blank" style="display:inline-block;margin-left:12px;padding:10px 14px;border-radius:8px;background:#eee;color:#111;text-decoration:none">WhatsApp</a>
+          <div id="s_result" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>© PrimeExpress · Todos os direitos reservados</footer>
+
+<script>
+function sendProblem(){
+  const name = document.getElementById('p_name').value || 'Cliente';
+  const order = document.getElementById('p_order').value || '(sem ID)';
+  document.getElementById('p_result').innerHTML = '<div style="padding:10px;background:#f0fbff;border:1px solid #cfe7ff;border-radius:8px">Obrigado, '+name+'. Protocolo gerado para o pedido '+order+'. Nossa equipe entrará em contato.</div>';
+}
+function sendSAC(){
+  const name = document.getElementById('s_name').value || 'Cliente';
+  const market = document.getElementById('s_market').value;
+  document.getElementById('s_result').innerHTML = '<div style="padding:10px;background:#f0fbff;border:1px solid #cfe7ff;border-radius:8px">Mensagem enviada. Obrigado, '+name+'. Atendimento referente a: '+market+'.</div>';
+}
+</script>
 </body>
 </html>
